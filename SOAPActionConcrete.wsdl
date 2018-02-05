@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:tns="http://xmlns.example.com/1517774534740" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://www.tibco.com/schemas/SoapAction/Schema/CustomerSchema.xsd" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap1="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://xmlns.example.com/1517774534740">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cust="http://www.tibco.com/schemas/SoapAction/Schema/CustomerSchema.xsd" targetNamespace="http://www.tibco.com/schemas/SoapAction/Schema/CustomerSchema.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:element name="City" type="xs:string"/>
+            <xs:element name="LastName" type="xs:string"/>
+            <xs:element name="addCustomerRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="cust:firstName"/>
+                        <xs:element ref="cust:LastName"/>
+                        <xs:element ref="cust:City"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addCustomerResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="cust:custId"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="custId" type="xs:string"/>
+            <xs:element name="cutomerFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="faultCode" type="xs:string"/>
+                        <xs:element name="faultMessage" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="getCustomerRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="cust:custId"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCustomerResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="cust:custId"/>
+                        <xs:element ref="cust:firstName"/>
+                        <xs:element ref="cust:LastName"/>
+                        <xs:element ref="cust:City"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="CustomerAbstractWSDL-service0">
+        <wsdl:port name="CustomerPortTypeEndpointHTTP" binding="tns:CustomerPortTypeEndpointHTTPBinding">
+            <soap:address location="http://localhost:8091/customer"/>
+        </wsdl:port>
+        <wsdl:port name="CustomerPortTypeEndpointJMS" binding="tns:CustomerPortTypeEndpointJMSBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">hex.customer</jms:targetAddress>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="CustomerPortType">
+        <wsdl:operation name="GetCustomerOperation">
+            <wsdl:input message="tns:getCustomerInputMessage"/>
+            <wsdl:output message="tns:getCustomerResponseMessage"/>
+            <wsdl:fault name="fault1" message="tns:CustomerFaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="AddCustomerOperation">
+            <wsdl:input message="tns:addCustomerInputMessage"/>
+            <wsdl:output message="tns:addCustomerOutputMessage"/>
+            <wsdl:fault name="fault1" message="tns:CustomerFaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CustomerPortTypeEndpointHTTPBinding" type="tns:CustomerPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetCustomerOperation">
+            <soap:operation style="document" soapAction="/customer/getCutomer"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="getCustomerRequest"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="getCustomerResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="AddCustomerOperation">
+            <soap:operation style="document" soapAction="/customer/addCustomer"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="addCustomerInput"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="addCustomerResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CustomerPortTypeEndpointJMSBinding" type="tns:CustomerPortType">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="GetCustomerOperation">
+            <soap:operation style="document" soapAction="/customer/jms/getCustomer"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="getCustomerRequest"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="getCustomerResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="AddCustomerOperation">
+            <soap:operation style="document" soapAction="/customer/jms/addCustomer"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="addCustomerInput"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="addCustomerResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="getCustomerInputMessage">
+        <wsdl:part name="getCustomerRequest" element="ns0:getCustomerRequest"/>
+    </wsdl:message>
+    <wsdl:message name="getCustomerResponseMessage">
+        <wsdl:part name="getCustomerResponse" element="ns0:getCustomerResponse"/>
+    </wsdl:message>
+    <wsdl:message name="CustomerFaultMessage">
+        <wsdl:part name="CustomerFault" element="ns0:cutomerFault"/>
+    </wsdl:message>
+    <wsdl:message name="addCustomerInputMessage">
+        <wsdl:part name="addCustomerInput" element="ns0:addCustomerRequest"/>
+    </wsdl:message>
+    <wsdl:message name="addCustomerOutputMessage">
+        <wsdl:part name="addCustomerResponse" element="ns0:addCustomerResponse"/>
+    </wsdl:message>
+</wsdl:definitions>
